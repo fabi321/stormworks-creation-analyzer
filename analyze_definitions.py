@@ -200,7 +200,7 @@ def definitions_to_json(definitions: list[Definition]) -> str:
         definition.id: definition.to_dict()
         for definition in definitions
     }
-    return json.dumps(dict_definitions, indent=4)
+    return json.dumps(dict_definitions, indent=2)
 
 
 def main():
