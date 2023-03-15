@@ -2,7 +2,7 @@ from __future__ import annotations
 import re
 from xml.etree import ElementTree as ET
 from pathlib import Path
-from typing import Optional, TypedDict
+from typing import Optional, TypedDict, Any
 from sys import stderr
 import json
 
@@ -200,7 +200,33 @@ def definitions_to_json(definitions: list[Definition]) -> str:
         definition.id: definition.to_dict()
         for definition in definitions
     }
-    return json.dumps(dict_definitions, indent=2)
+    general_dict: dict[str, Any] = {
+        'components': dict_definitions,
+        'logics': {
+            '0': {'label': 'On/Off'},
+            '1': {'label': 'Number'},
+            '2': {'label': 'Power'},
+            '3': {'label': 'Fluid'},
+            '4': {'label': 'Energy'},
+            '5': {'label': 'Composite'},
+            '6': {'label': 'Video'},
+            '7': {'label': 'Video'}
+        },
+        'general_stats': {
+            'data_version': 'Version',
+            'is_advanced': 'Advanced Engine',
+            'is_static': 'Static',
+            'authors': 'Authors',
+            'body_count': 'Number of bodies',
+            'component_count': 'Total number of blocks',
+            'logics_count': 'Total number of logical connections',
+            'color_count': 'Different colors used',
+            'microcontroller_count': 'Number of microcontrollers',
+            'total_cable_length': 'Total length of logic cable used',
+            'total_mass': 'Total mass'
+        }
+    }
+    return json.dumps(general_dict, indent=2)
 
 
 def main():
