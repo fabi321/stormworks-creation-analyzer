@@ -125,6 +125,7 @@ IMAGES_BASE_URL: str = 'https://static.wikia.nocookie.net/stormworks_gamepedia_e
 EXPLICIT_IMAGE_MAPPINGS: dict[str, str] = {
     'angular_speed_sensor': '2/2b/Linear_Speed_Sensor.jpg',
     'large_rotor': '6/69/Rotor_Large.jpg',
+    'fluid_filter_v2': 'a/a0/Fluid_Filter.jpg',
 }
 
 
