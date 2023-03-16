@@ -169,7 +169,7 @@ def extract_image_urls_from_wiki_site(url: str) -> dict[str, str]:
     images: dict[str, str] = {}
     for img_div in list_items:
         name: str = img_div.get('id').lower().replace('[', '').replace(']', '').split('|')[0]
-        img_url: str = img_div.find('a').get('href')
+        img_url: str = img_div.find('a').get('href').split('/revision/')[0]
         if name in WIKI_NAMES_TO_GAME_NAMES:
             name = WIKI_NAMES_TO_GAME_NAMES[name]
         images[name] = img_url
