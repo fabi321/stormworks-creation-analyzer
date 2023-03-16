@@ -14,7 +14,8 @@ definition_path: Path = Path('~/.steam/steam/steamapps/common/Stormworks/rom/dat
 WIKI_BASE: str = 'https://stormworks.fandom.com/wiki/Wiki/Building/Components/'
 WIKI_SITES: tuple[str, ...] = (
     'Blocks', 'Vehicle_Control', 'Mechanics', 'Propulsion', 'Person_Operations', 'Radio', 'Fluids', 'Logic',
-    'User_Input', 'Electricity', 'Displays', 'Sound', 'Sensors', 'Decorative', 'Video/Monitors', 'Video/Cameras'
+    'User_Input', 'Electricity', 'Displays', 'Sound', 'Sensors', 'Decorative', 'Video/Monitors', 'Video/Cameras',
+    'Decorative/Lights'
 )
 WIKI_NAMES_TO_GAME_NAMES: dict[str, str] = {
     'window_1x1_inverted_pyramid': 'window_1x1_inv_pyramid',
@@ -115,6 +116,15 @@ WIKI_NAMES_TO_GAME_NAMES: dict[str, str] = {
     'hud_1x1': 'monitor_hud_1',
     'hud_3x3': 'monitor_hud_3',
     'monitor_3x5': 'monitor_5',
+    'spotlight_small_(block)': 'searchlight_small',
+    'spotlight_small_(mounted)': 'searchlight_small_2',
+    'rgb_light': 'small_light_rgb',
+    'indicator_rgb_light': 'indicator_rgb',
+}
+IMAGES_BASE_URL: str = 'https://static.wikia.nocookie.net/stormworks_gamepedia_en/images/'
+EXPLICIT_IMAGE_MAPPINGS: dict[str, str] = {
+    'angular_speed_sensor': '2/2b/Linear_Speed_Sensor.jpg',
+    'large_rotor': '6/69/Rotor_Large.jpg',
 }
 
 
@@ -169,7 +179,11 @@ def extract_image_urls_from_wiki_site(url: str) -> dict[str, str]:
     images: dict[str, str] = {}
     for img_div in list_items:
         name: str = img_div.get('id').lower().replace('[', '').replace(']', '').split('|')[0]
-        img_url: str = img_div.find('a').get('href').split('/revision/')[0]
+        links: list[Tag] = img_div.find_all('a')
+        img_url: str = links[0].get('href')
+        if '/images/' not in img_url and len(links) > 1:
+            img_url = links[1].get('href')
+        img_url = img_url.split('/revision/')[0]
         if name in WIKI_NAMES_TO_GAME_NAMES:
             name = WIKI_NAMES_TO_GAME_NAMES[name]
         images[name] = img_url
@@ -193,6 +207,9 @@ def extract_images(definitions: list[Definition]):
         full_url: str = WIKI_BASE + site
         image_urls: dict[str, str] = extract_image_urls_from_wiki_site(full_url)
         extend_definitions_using_images(definitions, image_urls)
+    for definition in definitions:
+        if definition.id in EXPLICIT_IMAGE_MAPPINGS:
+            definition.url = IMAGES_BASE_URL + EXPLICIT_IMAGE_MAPPINGS[definition.id]
 
 
 def definitions_to_json(definitions: list[Definition]) -> str:
